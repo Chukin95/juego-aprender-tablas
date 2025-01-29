@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/multi.ico" type="image/x-icon">
     <title>Juego: Aprender las tablas</title>
 </head>
 
@@ -22,12 +23,13 @@
                         <p class="texto__parrafo"></p>
                         <p id="puntaje">Experiencia: 0</p>
                         <div id="temporizador">Tiempo: 20s</div>
-                        
                     </div>
                     <input type="number" id="valorUsuario" min="1" max="10" class="container__input">
                     <div class="chute container__botones">
-                        <button onclick="verificarRespuesta();" class="container__boton" id="intentoBoton">Intentar</button>
-                        <button onclick="reiniciarJuego();" class="container__boton" id="reiniciar" disabled>Nuevo juego</button>
+                        <button onclick="verificarRespuesta();" class="container__boton"
+                            id="intentoBoton">Intentar</button>
+                        <button onclick="reiniciarJuego();" class="container__boton" id="reiniciar"
+                            disabled>Siguiente</button>
                     </div>
                 </div>
                 <img src="./img/ia.png" alt="Una persona mirando a la izquierda" class="container__imagen-persona" />
