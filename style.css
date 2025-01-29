@@ -1,0 +1,282 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+body {
+    background: linear-gradient(#1354A5 0%, #041832 33.33%, #041832 66.67%, #01080E 100%);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+body::before {
+    background-image: url("img/code.png");
+    background-repeat: no-repeat;
+    background-position: right;
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.4;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.container__contenido {
+    width: 1200px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 24px;
+    border: 1px solid #1875E8;
+    box-shadow: 4px 4px 20px 0px rgba(1, 8, 14, 0.15);
+    background-image: url("img/Ruido.png");
+    background-size: 100% 100%;
+    position: relative;
+    padding: 2rem;
+}
+
+.container__historial {
+    width: 400px;
+    height: 600px;
+    border-radius: 0.5rem;
+    border: 1px solid #1875E8;
+    box-shadow: 4px 4px 20px 0px rgba(1, 8, 14, 0.15);
+    background-image: url("img/Ruido.png");
+    background-size: 100% 100%;
+    padding: 2rem;
+    position: relative; /* Añadido */
+}
+
+.container__historial ol {
+    padding-left: 2rem;
+}
+
+
+.historial-titulo {
+    position: sticky;
+    top: 0;
+    /*background-color: rgba(4, 24, 50, 0.5);*/ /* Un fondo semi-transparente que coincida con el tema */
+    padding: 1rem 0;
+    margin: 0;
+    text-align: center;
+    z-index: 1;
+}
+
+.historial-lista-container {
+    height: calc(100% - 8rem); /* Ajusta este valor según el tamaño de tu título */
+    overflow-y: auto;
+}
+
+.historial-lista-container ol {
+    padding-left: 2rem;
+    padding-bottom: 5rem;
+    margin: 0;
+}
+
+
+/* Estilos para la barra de desplazamiento */
+.historial-lista-container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.historial-lista-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.historial-lista-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+}
+
+.historial-lista-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.container__contenido {
+    display: flex;
+    align-items: center;
+    position: relative;
+    bottom: 0;
+}
+
+.container__informaciones {
+    flex: 1;
+    padding: 3rem;
+}
+
+.container__boton {
+    border-radius: 16px;
+    background: #1875E8;
+    padding: 16px 24px;
+    width: 100%;
+    font-size: 24px;
+    font-weight: 700;
+    border: none;
+    margin-top: 2rem;
+}
+
+.container__boton:disabled {
+    background: #898989;
+}
+
+.container__texto {
+    margin: 16px 0 16px 0;
+}
+
+.container__texto-azul {
+    color: #1875E8;
+}
+
+.container__input {
+    width: 100%;
+    height: 72px;
+    border-radius: 16px;
+    background-color: #FFF;
+    border: none;
+    color: #1875E8;
+    padding: 2rem;
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+}
+
+.container__botones {
+    display: flex;
+    gap: 2em;
+}
+
+h1 {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 72px;
+    padding-bottom: 3rem;
+}
+
+p,
+button {
+    font-family: 'Inter', sans-serif;
+}
+
+.texto__parrafo {
+    font-size: 32px;
+    font-weight: 400;
+}
+
+
+.mensaje-final {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  
+.mensaje-final h1 {
+    color: #0A3871;
+    margin-bottom: 1rem;
+  }
+  
+.mensaje-final p {
+    margin-bottom: 1rem;
+  }
+  
+.mensaje-final button {
+    background-color: #0A3871;
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+.mensaje-final button:hover {
+    background-color: #0c4a94;
+  }
+
+/* Añadir estas nuevas reglas */
+.historial-titulo {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+.container__historial ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.container__historial li {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.container__historial::-webkit-scrollbar {
+    width: 10px;
+}
+
+.container__historial::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.container__historial::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+}
+
+.container__historial::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);   
+}
+
+#temporizador {
+  display: inline-block;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.5s ease;
+  margin-right: 10px; /* Añade un margen a la derecha para separarlo de otros elementos */
+}
+
+.tiempo-verde {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.tiempo-amarillo {
+  background-color: #FFEB3B;
+  color: black;
+}
+
+.tiempo-naranja {
+  background-color: #FF9800;
+  color: white;
+}
+
+.tiempo-rojo {
+  background-color: #F44336;
+  color: white;
+}
