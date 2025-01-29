@@ -49,7 +49,7 @@ function actualizarHistorial() {
   historialLista.innerHTML = "";
   historial.forEach((item) => {
     const li = document.createElement("li");
-    li.textContent = `${item.pregunta} - Tu respuesta: ${item.respuestaUsuario} (${item.correcta ? "✅ Correcto" : "❌ Incorrecto"})`;
+    li.textContent = ` - Tu respuesta a ${item.pregunta} ha sido: ${item.respuestaUsuario} - (${item.correcta ? "✅ Correcto" : "❌ Incorrecto"})`;
     historialLista.appendChild(li);
   });
   console.log("Historial actualizado con " + historial.length + " elementos");
