@@ -1,6 +1,6 @@
 // Variables globales
 let puntaje = 0;
-let puntajeRequerido = 100;
+let puntajeRequerido = 200;
 let historial = [];
 let intentosRestantes = 3;
 let tablas = [1, 2];
