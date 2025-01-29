@@ -10,6 +10,7 @@ let tiempoRestante = 20;
 let temporizador;
 document.querySelector(".texto__parrafo").textContent =
   "Intenta resolver la multiplicación.";
+document.getElementById("valorUsuario").focus();
 
 // Generar una multiplicación aleatoria
 function generarMultiplicacion() {
@@ -21,22 +22,18 @@ function generarMultiplicacion() {
 // Mostrar la pregunta en la pantalla
 function mostrarPregunta() {
   const { tabla, numero, resultado } = generarMultiplicacion();
-  document.querySelector("h1").textContent = `${tabla} x ${numero}:`;
+  document.querySelector("h1").textContent = `${tabla} x ${numero}`;
   respuestaCorrecta = resultado;
-
-  // Reiniciar el temporizador
-  clearInterval(temporizador);
-  tiempoRestante = 20;
-  temporizador = setInterval(actualizarTemporizador, 1000);
+  reiniciarTemporizador(); // Reiniciar el temporizador
 }
 
 function mostrarHistorial() {
-    const historialContainer = document.querySelector(".container__historial");
-    if (historialContainer) {
-        historialContainer.style.display = "block";
-    } else {
-        console.error("El contenedor del historial no se encontró");
-    }
+  const historialContainer = document.querySelector(".container__historial");
+  if (historialContainer) {
+    historialContainer.style.display = "block";
+  } else {
+    console.error("El contenedor del historial no se encontró");
+  }
 }
 
 function actualizarHistorial() {
@@ -49,7 +46,9 @@ function actualizarHistorial() {
   historialLista.innerHTML = "";
   historial.forEach((item) => {
     const li = document.createElement("li");
-    li.textContent = ` - Tu respuesta a ${item.pregunta} ha sido: ${item.respuestaUsuario} - (${item.correcta ? "✅ Correcto" : "❌ Incorrecto"})`;
+    li.textContent = ` Tu respuesta a ${item.pregunta} ha sido: ${
+      item.respuestaUsuario
+    } - (${item.correcta ? "✅ Correcto" : "❌ Incorrecto"})`;
     historialLista.appendChild(li);
   });
   console.log("Historial actualizado con " + historial.length + " elementos");
@@ -66,20 +65,24 @@ function verificarSubirNivel() {
     puntaje = 0;
     nivel++;
     console.log(`Has pasado al nivel ${nivel}!`);
-    tablas.push(tablas.at(-1)+1);
+    tablas.push(tablas.at(-1) + 1);
 
     // Mantener solo las dos últimas tablas si hay más de dos
     if (tablas.length > 2) {
       tablas = tablas.slice(-2);
     }
 
-    console.log(`Tablas actuales: ${tablas.join(' y ')}`);
+    console.log(`Tablas actuales: ${tablas.join(" y ")}`);
     actualizarPuntajeEnPantalla();
   }
 }
 
 function actualizarPuntajeEnPantalla() {
-  document.getElementById("puntaje").textContent = `Experiencia: ${puntaje}/${puntajeRequerido} | Nivel: ${nivel} | Tablas actuales: ${tablas.join(' y ')}`;
+  document.getElementById(
+    "puntaje"
+  ).textContent = `Experiencia: ${puntaje}/${puntajeRequerido} | Nivel: ${nivel} | Tablas actuales: ${tablas.join(
+    " y "
+  )}`;
 }
 // Verificar la respuesta del usuario
 function actualizarTemporizador() {
@@ -88,13 +91,13 @@ function actualizarTemporizador() {
 
   // Actualizar el color basado en el tiempo restante
   if (tiempoRestante > 15) {
-    temporizadorElement.className = 'tiempo-verde';
+    temporizadorElement.className = "tiempo-verde";
   } else if (tiempoRestante > 10) {
-    temporizadorElement.className = 'tiempo-amarillo';
+    temporizadorElement.className = "tiempo-amarillo";
   } else if (tiempoRestante > 5) {
-    temporizadorElement.className = 'tiempo-naranja';
+    temporizadorElement.className = "tiempo-naranja";
   } else {
-    temporizadorElement.className = 'tiempo-rojo';
+    temporizadorElement.className = "tiempo-rojo";
   }
   if (tiempoRestante === 0) {
     clearInterval(temporizador);
@@ -104,10 +107,9 @@ function actualizarTemporizador() {
   }
 }
 function verificarRespuesta(tiempoAgotado = false) {
-  const respuestaUsuario = tiempoAgotado ? null : parseInt(
-    document.getElementById("valorUsuario").value,
-    10
-  );
+  const respuestaUsuario = tiempoAgotado
+    ? null
+    : parseInt(document.getElementById("valorUsuario").value, 10);
   const resultadoElement = document.querySelector(".texto__parrafo");
 
   if (!tiempoAgotado && isNaN(respuestaUsuario)) {
@@ -118,10 +120,11 @@ function verificarRespuesta(tiempoAgotado = false) {
 
   if (tiempoAgotado) {
     clearInterval(temporizador);
-    resultadoElement.textContent = `Tiempo agotado. La respuesta correcta es ${respuestaCorrecta}.`;
+    resultadoElement.textContent = `Tiempo agotado. La respuesta correcta era ${respuestaCorrecta}.`;
     resultadoElement.style.color = "red";
     document.getElementById("reiniciar").disabled = false;
     document.getElementById("intentoBoton").disabled = true;
+    document.getElementById("valorUsuario").disabled = true;
     puntaje = Math.max(0, puntaje - 10); // Restar 10 puntos, pero no bajar de 0
     mostrarHistorial();
   } else if (respuestaUsuario === respuestaCorrecta) {
@@ -130,6 +133,7 @@ function verificarRespuesta(tiempoAgotado = false) {
     resultadoElement.style.color = "green";
     document.getElementById("reiniciar").disabled = false;
     document.getElementById("intentoBoton").disabled = true;
+    document.getElementById("valorUsuario").disabled = true;
     puntaje += 10; // Aumentar el puntaje por acertar
     mostrarHistorial();
   } else {
@@ -140,16 +144,15 @@ function verificarRespuesta(tiempoAgotado = false) {
 
     if (intentosRestantes === 0) {
       clearInterval(temporizador);
-      resultadoElement.textContent = `Incorrecto. La respuesta correcta es ${respuestaCorrecta}.`;
+      resultadoElement.textContent = `Incorrecto. La respuesta correcta era ${respuestaCorrecta}.`;
       document.getElementById("reiniciar").disabled = false;
       document.getElementById("intentoBoton").disabled = true;
+      document.getElementById("valorUsuario").disabled = true;
       puntaje = Math.max(0, puntaje - 25); // Restar 25 puntos, pero no bajar de 0
       mostrarHistorial();
     } else {
       // Reiniciar el temporizador para el siguiente intento
-      clearInterval(temporizador);
-      tiempoRestante = 20;
-      temporizador = setInterval(actualizarTemporizador, 1000);
+      reiniciarTemporizador();
     }
   }
 
@@ -173,37 +176,47 @@ function reiniciarJuego() {
   document.querySelector(".texto__parrafo").style.color = "white";
   document.getElementById("reiniciar").disabled = true;
   document.getElementById("intentoBoton").disabled = false;
+  document.getElementById("valorUsuario").disabled = false;
   mostrarPregunta();
   document.querySelector(".container__historial").style.display = "none"; // Ocultar historial al reiniciar
+  reiniciarTemporizador();
   actualizarPuntajeEnPantalla(); // Actualizamos el puntaje en pantalla
+  document.getElementById("valorUsuario").focus();
 }
 
 function finalizarJuego() {
   // Ocultar el contenedor principal
-  document.querySelector('.container').style.display = 'none';
+  document.querySelector(".container").style.display = "none";
 
   // Asegurarse de que el historial esté visible
-  const historialContainer = document.querySelector('.container__historial');
+  const historialContainer = document.querySelector(".container__historial");
   if (historialContainer) {
-    historialContainer.style.display = 'block';
+    historialContainer.style.display = "block";
   } else {
     console.error("El contenedor del historial no se encontró");
   }
 
   // Crear y mostrar el mensaje final
-  const mensajeFinal = document.createElement('div');
-  mensajeFinal.className = 'mensaje-final';
+  const mensajeFinal = document.createElement("div");
+  mensajeFinal.className = "mensaje-final";
   mensajeFinal.innerHTML = `
     <h1>¡Felicidades!</h1>
     <p>Has completado todas las tablas de multiplicar.</p>
     <button onclick="location.reload()">Volver a jugar</button>
   `;
+  console.log("¡Felicidades! Has completado todas las tablas de multiplicar!");
   document.body.appendChild(mensajeFinal);
 
   // Actualizar y mostrar el historial
   actualizarHistorial();
 
   console.log("Juego finalizado, historial debería ser visible ahora");
+}
+
+function reiniciarTemporizador() {
+  clearInterval(temporizador);
+  tiempoRestante = 20;
+  temporizador = setInterval(actualizarTemporizador, 1000);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -215,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("reiniciar")
     .addEventListener("click", reiniciarJuego);
-  document.getElementById("valorUsuario").addEventListener("keypress", (e) => {
+  document.addEventListener("keypress", (e) => {
     if (
       e.key === "Enter" &&
       document.getElementById("reiniciar").disabled === false
