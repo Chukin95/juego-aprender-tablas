@@ -16,7 +16,7 @@ body {
 
 body::before {
     background-image: url("img/code.png");
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-position: right;
     content: "";
     display: block;
@@ -339,7 +339,7 @@ button {
     background-color: rgba(10, 56, 113, 0.8);
     color: white;
     text-align: center;
-    padding: 10px 0;
+    padding: 2px 0;
     font-size: 14px;
     z-index: 1000;
 }
@@ -468,3 +468,59 @@ button {
 #historial-lista li::before {
     content: none !important;
 }
+
+.mensaje-final {
+  background-color: rgba(12, 12, 84, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 80%;
+  margin: 20px auto;
+}
+ .historial-final {
+     width: 100%;
+     max-width: 400px; /* Aumentado para mejor legibilidad */
+     max-height: 200px;
+     border-radius: 0.5rem;
+     border: 1px solid #1875E8;
+     box-shadow: 4px 4px 20px 0px rgba(1, 8, 14, 0.15);
+     background-image: url("img/Ruido.png");
+     background-size: cover;
+     padding: 2rem;
+     margin: 2rem auto; /* Centrado horizontalmente y con margen vertical */
+     overflow-y: auto; /* Permite desplazamiento vertical si el contenido es muy largo */
+ }
+
+ .historial-final ul {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding-left: 2rem;
+    padding-bottom: 5rem;
+    margin: 0;
+    /* hacer que el texto sea mas grande*/
+    font-size: 1.5rem;
+    font-weight: 700;
+ }
+
+ .historial-final li {
+     margin-bottom: 10px; /* Aumentado para mejor espaciado */
+     font-size: 16px; /* Aumentado para mejor legibilidad */
+     text-align: left; /* Alinea el texto a la izquierda dentro de cada elemento de la lista */
+ }
+
+ /* Asegúrate de que el contenedor padre tenga suficiente ancho */
+ .mensaje-final {
+     background-color: rgba(12, 12, 84, 0.8);
+     padding: 20px;
+     border-radius: 10px;
+     text-align: center;
+     max-width: 90%; /* Aumentado para acomodar mejor el historial en pantallas más pequeñas */
+     margin: 20px auto;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+ }

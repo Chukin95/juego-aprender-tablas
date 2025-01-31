@@ -196,7 +196,7 @@ function ocultarContenedorPrincipal() {
   if (contenedor) {
     contenedor.style.display = "none";
   } else {
-    mensajeConsola("red", "El contenedor principal no se encontró");
+    mensajeConsola("red", "🔎 El contenedor principal no se encontró");
   }
 }
 
@@ -205,7 +205,7 @@ function mostrarHistorialFinal() {
   if (historialContainer) {
     historialContainer.style.display = "block";
   } else {
-    mensajeConsola("red", "El contenedor del historial no se encontró");
+    mensajeConsola("red", "🔎 El contenedor del historial no se encontró");
   }
 }
 
@@ -214,7 +214,7 @@ function mostrarMensajeFinal() {
   document.body.appendChild(mensajeFinal);
   mensajeConsola(
     "green",
-    "¡Felicidades! Has completado todas las tablas de multiplicar!"
+    "🎉 ¡Felicidades! Has completado todas las tablas de multiplicar!"
   );
 }
 
@@ -224,10 +224,31 @@ function crearElementoMensajeFinal() {
   mensajeFinal.innerHTML = `
     <h1>¡Felicidades! Has completado todas las tablas de multiplicar!</h1>
     <p>Has completado todas las tablas de multiplicar.</p>
+    <h2>Tu recorrido:</h2>
+    ${generarHistorialHTML()}
     <button onclick="location.reload()">Volver a jugar</button>
   `;
   return mensajeFinal;
 }
+
+function generarHistorialHTML() {
+  return `
+    <div class="historial-final">
+      <ul>
+        ${historial.map(item => `
+          <li>
+            ${item.pregunta} =
+            ${item.respuestaUsuario === "Tiempo agotado"
+              ? "⏳ Tiempo agotado"
+              : `${item.respuestaUsuario} ${item.correcta ? "✅" : "❌"}`
+            }
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+  `;
+}
+
 
 function actualizarHistorial() {
   const historialLista = obtenerListaHistorial();
