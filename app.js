@@ -8,9 +8,319 @@ let respuestaCorrecta;
 let nivel = 1;
 let tiempoRestante = 20;
 let temporizador;
-document.querySelector(".texto__parrafo").textContent =
-  "Intenta resolver la multiplicación.";
-document.getElementById("valorUsuario").focus();
+
+function verificarRespuesta(tiempoAgotado = false) {
+  const respuestaUsuario = obtenerRespuestaUsuario(tiempoAgotado);
+  const resultadoElement = document.querySelector(".texto__parrafo");
+
+  if (validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement)) return;
+
+  if (tiempoAgotado) {
+    manejarTiempoAgotado(resultadoElement);
+  } else if (respuestaUsuario === respuestaCorrecta) {
+    manejarRespuestaCorrecta(resultadoElement);
+  } else {
+    manejarRespuestaIncorrecta(resultadoElement, respuestaUsuario);
+  }
+
+  verificarSubirNivel();
+  actualizarHistorialRespuesta(tiempoAgotado, respuestaUsuario);
+  actualizarInterfaz();
+}
+
+function obtenerRespuestaUsuario(tiempoAgotado) {
+  return tiempoAgotado
+    ? null
+    : parseInt(document.getElementById("valorUsuario").value, 10);
+}
+
+function validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement) {
+  if (!tiempoAgotado && isNaN(respuestaUsuario)) {
+    resultadoElement.textContent = "Debes ingresar un número.";
+    resultadoElement.style.color = "red";
+    return true;
+  }
+  return false;
+}
+
+function manejarTiempoAgotado(resultadoElement) {
+  clearInterval(temporizador);
+  resultadoElement.textContent = `Tiempo agotado. La respuesta correcta era ${respuestaCorrecta}.`;
+  resultadoElement.style.color = "red";
+  deshabilitarControles();
+  ajustarPuntaje(-10);
+  mostrarHistorial();
+}
+
+function manejarRespuestaCorrecta(resultadoElement) {
+  clearInterval(temporizador);
+  resultadoElement.textContent = "¡Correcto! 🎉";
+  resultadoElement.style.color = "green";
+  deshabilitarControles();
+  ajustarPuntaje(10);
+  mostrarHistorial();
+}
+
+function manejarRespuestaIncorrecta(resultadoElement, respuestaUsuario) {
+  intentosRestantes--;
+  if (intentosRestantes > 0) {
+    manejarIntentosRestantes(resultadoElement);
+  } else {
+    manejarSinIntentosRestantes(resultadoElement);
+  }
+}
+
+function manejarIntentosRestantes(resultadoElement) {
+  resultadoElement.textContent = `Incorrecto. Intentos restantes: ${intentosRestantes}`;
+  resultadoElement.style.color = "red";
+  ajustarPuntaje(-5);
+  reiniciarTemporizador();
+}
+
+function manejarSinIntentosRestantes(resultadoElement) {
+  clearInterval(temporizador);
+  resultadoElement.textContent = `Incorrecto. La respuesta correcta era ${respuestaCorrecta}.`;
+  deshabilitarControles();
+  ajustarPuntaje(-25);
+  mostrarHistorial();
+}
+
+function deshabilitarControles() {
+  document.getElementById("reiniciar").disabled = false;
+  document.getElementById("intentoBoton").disabled = true;
+  document.getElementById("valorUsuario").disabled = true;
+}
+
+function ajustarPuntaje(puntos) {
+  puntaje = Math.max(0, puntaje + puntos);
+}
+
+function actualizarHistorialRespuesta(tiempoAgotado, respuestaUsuario) {
+  historial.push({
+    pregunta: document.querySelector("h1").textContent,
+    respuestaUsuario: tiempoAgotado ? "Tiempo agotado" : respuestaUsuario,
+    correcta: respuestaUsuario === respuestaCorrecta,
+  });
+}
+
+function actualizarInterfaz() {
+  actualizarHistorial();
+  actualizarPuntajeEnPantalla();
+  document.getElementById("valorUsuario").value = "";
+}
+
+function reiniciarJuego() {
+  reiniciarVariables();
+  actualizarInterfazUsuario();
+  reiniciarElementosJuego();
+  ocultarHistorial();
+  reiniciarTemporizador();
+  actualizarPuntajeEnPantalla();
+  enfocarInputUsuario();
+}
+
+function reiniciarVariables() {
+  intentosRestantes = 3;
+}
+
+function actualizarInterfazUsuario() {
+  actualizarTextoParrafo();
+  actualizarEstadoBotones();
+}
+
+function actualizarTextoParrafo() {
+  const parrafo = document.querySelector(".texto__parrafo");
+  parrafo.textContent = "Intenta resolver la multiplicación.";
+  parrafo.style.color = "white";
+}
+
+function actualizarEstadoBotones() {
+  document.getElementById("reiniciar").disabled = true;
+  document.getElementById("intentoBoton").disabled = false;
+  document.getElementById("valorUsuario").disabled = false;
+}
+
+function reiniciarElementosJuego() {
+  mostrarPregunta();
+}
+
+function ocultarHistorial() {
+  document.querySelector(".container__historial").style.display = "none";
+}
+
+function enfocarInputUsuario() {
+  document.getElementById("valorUsuario").focus();
+}
+
+function finalizarJuego() {
+  ocultarContenedorPrincipal();
+  mostrarHistorialFinal();
+  mostrarMensajeFinal();
+  actualizarHistorial();
+  console.log("Juego finalizado, historial debería ser visible ahora");
+}
+
+function ocultarContenedorPrincipal() {
+  const contenedor = document.querySelector(".container");
+  if (contenedor) {
+    contenedor.style.display = "none";
+  } else {
+    console.error("El contenedor principal no se encontró");
+  }
+}
+
+function mostrarHistorialFinal() {
+  const historialContainer = document.querySelector(".container__historial");
+  if (historialContainer) {
+    historialContainer.style.display = "block";
+  } else {
+    console.error("El contenedor del historial no se encontró");
+  }
+}
+
+function mostrarMensajeFinal() {
+  const mensajeFinal = crearElementoMensajeFinal();
+  document.body.appendChild(mensajeFinal);
+  console.log("¡Felicidades! Has completado todas las tablas de multiplicar!");
+}
+
+function crearElementoMensajeFinal() {
+  const mensajeFinal = document.createElement("div");
+  mensajeFinal.className = "mensaje-final";
+  mensajeFinal.innerHTML = `
+    <h1>¡Felicidades!</h1>
+    <p>Has completado todas las tablas de multiplicar.</p>
+    <button onclick="location.reload()">Volver a jugar</button>
+  `;
+  return mensajeFinal;
+}
+
+function actualizarHistorial() {
+  const historialLista = obtenerListaHistorial();
+  if (!historialLista) return;
+  limpiarListaHistorial(historialLista);
+  agregarElementosHistorial(historialLista);
+  console.log(`Historial actualizado con ${historial.length} elementos`);
+}
+
+function obtenerListaHistorial() {
+  const historialLista = document.getElementById("historial-lista");
+  if (!historialLista) {
+    console.error("La lista del historial no se encontró");
+    return null;
+  }
+  return historialLista;
+}
+
+function limpiarListaHistorial(lista) {
+  lista.innerHTML = "";
+}
+
+function agregarElementosHistorial(lista) {
+  historial.forEach((item) => {
+    const li = crearElementoHistorial(item);
+    lista.appendChild(li);
+  });
+}
+
+function crearElementoHistorial(item) {
+  const li = document.createElement("li");
+  li.textContent = formatearTextoHistorial(item);
+  return li;
+}
+
+function formatearTextoHistorial(item) {
+  const estadoRespuesta = item.correcta ? "✅ Correcto" : "❌ Incorrecto";
+  return ` Tu respuesta a ${item.pregunta} ha sido: ${item.respuestaUsuario} - (${estadoRespuesta})`;
+}
+
+function verificarSubirNivel() {
+  if (puntaje >= puntajeRequerido) {
+    if (esNivelMaximo()) {
+      finalizarJuego();
+      return;
+    }
+    subirNivel();
+    actualizarTablas();
+    actualizarInterfazNuevoNivel();
+  }
+}
+
+function esNivelMaximo() {
+  return tablas.includes(10);
+}
+
+function subirNivel() {
+  puntaje = 0;
+  nivel++;
+  console.log(`Has pasado al nivel ${nivel}!`);
+}
+
+function actualizarTablas() {
+  tablas.push(tablas.at(-1) + 1);
+  if (tablas.length > 2) {
+    tablas = tablas.slice(-2);
+  }
+  console.log(`Tablas actuales: ${tablas.join(" y ")}`);
+}
+
+function actualizarInterfazNuevoNivel() {
+  document.querySelector(".texto__parrafo").textContent =
+    "¡Has superado el nivel!";
+  reiniciarJuego();
+  actualizarPuntajeEnPantalla();
+}
+
+function actualizarTemporizador() {
+  actualizarTextoTemporizador();
+  actualizarColorTemporizador();
+  manejarTiempoAgotado();
+  decrementarTiempo();
+}
+
+function actualizarTextoTemporizador() {
+  const temporizadorElement = document.getElementById("temporizador");
+  temporizadorElement.textContent = `Tiempo: ${tiempoRestante}s`;
+}
+
+function actualizarColorTemporizador() {
+  const temporizadorElement = document.getElementById("temporizador");
+  temporizadorElement.className = obtenerClaseTiempo();
+}
+
+function obtenerClaseTiempo() {
+  if (tiempoRestante > 15) return "tiempo-verde";
+  if (tiempoRestante > 10) return "tiempo-amarillo";
+  if (tiempoRestante > 5) return "tiempo-naranja";
+  return "tiempo-rojo";
+}
+
+function manejarTiempoAgotado() {
+  if (tiempoRestante === 0) {
+    clearInterval(temporizador);
+    verificarRespuesta(true);
+  }
+}
+
+function decrementarTiempo() {
+  if (tiempoRestante > 0) {
+    tiempoRestante--;
+  }
+}
+
+function reiniciarTemporizador() {
+  clearInterval(temporizador);
+  tiempoRestante = 20;
+  temporizador = setInterval(actualizarTemporizador, 1000);
+}
+
+function actualizarPuntajeEnPantalla() {
+  document.getElementById(
+    "puntaje"
+  ).textContent = `Experiencia: ${puntaje}/${puntajeRequerido} | Nivel: ${nivel} | Tablas actuales: ${tablas.join(
+    " y "
+  )}`;
+}
 
 // Generar una multiplicación aleatoria
 function generarMultiplicacion() {
@@ -24,7 +334,7 @@ function mostrarPregunta() {
   const { tabla, numero, resultado } = generarMultiplicacion();
   document.querySelector("h1").textContent = `${tabla} x ${numero}`;
   respuestaCorrecta = resultado;
-  reiniciarTemporizador(); // Reiniciar el temporizador
+  reiniciarTemporizador();
 }
 
 function mostrarHistorial() {
@@ -36,209 +346,32 @@ function mostrarHistorial() {
   }
 }
 
-function actualizarHistorial() {
-  console.log("Actualizando historial...");
-  const historialLista = document.getElementById("historial-lista");
-  if (!historialLista) {
-    console.error("La lista del historial no se encontró");
-    return;
-  }
-  historialLista.innerHTML = "";
-  historial.forEach((item) => {
-    const li = document.createElement("li");
-    li.textContent = ` Tu respuesta a ${item.pregunta} ha sido: ${
-      item.respuestaUsuario
-    } - (${item.correcta ? "✅ Correcto" : "❌ Incorrecto"})`;
-    historialLista.appendChild(li);
-  });
-  console.log("Historial actualizado con " + historial.length + " elementos");
-}
-function verificarSubirNivel() {
-  if (puntaje >= puntajeRequerido) {
-    if (tablas.includes(10)) {
-      finalizarJuego();
-      return;
-    }
-    document.querySelector(".texto__parrafo").textContent =
-      "¡Has superado el nivel!";
-    reiniciarJuego();
-    puntaje = 0;
-    nivel++;
-    console.log(`Has pasado al nivel ${nivel}!`);
-    tablas.push(tablas.at(-1) + 1);
-
-    // Mantener solo las dos últimas tablas si hay más de dos
-    if (tablas.length > 2) {
-      tablas = tablas.slice(-2);
-    }
-
-    console.log(`Tablas actuales: ${tablas.join(" y ")}`);
-    actualizarPuntajeEnPantalla();
-  }
-}
-
-function actualizarPuntajeEnPantalla() {
-  document.getElementById(
-    "puntaje"
-  ).textContent = `Experiencia: ${puntaje}/${puntajeRequerido} | Nivel: ${nivel} | Tablas actuales: ${tablas.join(
-    " y "
-  )}`;
-}
-// Verificar la respuesta del usuario
-function actualizarTemporizador() {
-  const temporizadorElement = document.getElementById("temporizador");
-  temporizadorElement.textContent = `Tiempo: ${tiempoRestante}s`;
-
-  // Actualizar el color basado en el tiempo restante
-  if (tiempoRestante > 15) {
-    temporizadorElement.className = "tiempo-verde";
-  } else if (tiempoRestante > 10) {
-    temporizadorElement.className = "tiempo-amarillo";
-  } else if (tiempoRestante > 5) {
-    temporizadorElement.className = "tiempo-naranja";
-  } else {
-    temporizadorElement.className = "tiempo-rojo";
-  }
-  if (tiempoRestante === 0) {
-    clearInterval(temporizador);
-    verificarRespuesta(true);
-  } else {
-    tiempoRestante--;
-  }
-}
-function verificarRespuesta(tiempoAgotado = false) {
-  const respuestaUsuario = tiempoAgotado
-    ? null
-    : parseInt(document.getElementById("valorUsuario").value, 10);
-  const resultadoElement = document.querySelector(".texto__parrafo");
-
-  if (!tiempoAgotado && isNaN(respuestaUsuario)) {
-    resultadoElement.textContent = "Debes ingresar un número.";
-    resultadoElement.style.color = "red";
-    return;
-  }
-
-  if (tiempoAgotado) {
-    clearInterval(temporizador);
-    resultadoElement.textContent = `Tiempo agotado. La respuesta correcta era ${respuestaCorrecta}.`;
-    resultadoElement.style.color = "red";
-    document.getElementById("reiniciar").disabled = false;
-    document.getElementById("intentoBoton").disabled = true;
-    document.getElementById("valorUsuario").disabled = true;
-    puntaje = Math.max(0, puntaje - 10); // Restar 10 puntos, pero no bajar de 0
-    mostrarHistorial();
-  } else if (respuestaUsuario === respuestaCorrecta) {
-    clearInterval(temporizador);
-    resultadoElement.textContent = "¡Correcto! 🎉";
-    resultadoElement.style.color = "green";
-    document.getElementById("reiniciar").disabled = false;
-    document.getElementById("intentoBoton").disabled = true;
-    document.getElementById("valorUsuario").disabled = true;
-    puntaje += 10; // Aumentar el puntaje por acertar
-    mostrarHistorial();
-  } else {
-    intentosRestantes--;
-    resultadoElement.textContent = `Incorrecto. Intentos restantes: ${intentosRestantes}`;
-    resultadoElement.style.color = "red";
-    puntaje = Math.max(0, puntaje - 5); // Restar 5 puntos, pero no bajar de 0
-
-    if (intentosRestantes === 0) {
-      clearInterval(temporizador);
-      resultadoElement.textContent = `Incorrecto. La respuesta correcta era ${respuestaCorrecta}.`;
-      document.getElementById("reiniciar").disabled = false;
-      document.getElementById("intentoBoton").disabled = true;
-      document.getElementById("valorUsuario").disabled = true;
-      puntaje = Math.max(0, puntaje - 25); // Restar 25 puntos, pero no bajar de 0
-      mostrarHistorial();
-    } else {
-      // Reiniciar el temporizador para el siguiente intento
-      reiniciarTemporizador();
-    }
-  }
-
-  verificarSubirNivel();
-
-  historial.push({
-    pregunta: document.querySelector("h1").textContent,
-    respuestaUsuario: tiempoAgotado ? "Tiempo agotado" : respuestaUsuario,
-    correcta: respuestaUsuario === respuestaCorrecta,
-  });
-
-  actualizarHistorial();
-  actualizarPuntajeEnPantalla();
-  document.getElementById("valorUsuario").value = "";
-}
-
-function reiniciarJuego() {
-  intentosRestantes = 3;
-  document.querySelector(".texto__parrafo").textContent =
-    "Intenta resolver la multiplicación.";
-  document.querySelector(".texto__parrafo").style.color = "white";
-  document.getElementById("reiniciar").disabled = true;
-  document.getElementById("intentoBoton").disabled = false;
-  document.getElementById("valorUsuario").disabled = false;
-  mostrarPregunta();
-  document.querySelector(".container__historial").style.display = "none"; // Ocultar historial al reiniciar
-  reiniciarTemporizador();
-  actualizarPuntajeEnPantalla(); // Actualizamos el puntaje en pantalla
-  document.getElementById("valorUsuario").focus();
-}
-
-function finalizarJuego() {
-  // Ocultar el contenedor principal
-  document.querySelector(".container").style.display = "none";
-
-  // Asegurarse de que el historial esté visible
-  const historialContainer = document.querySelector(".container__historial");
-  if (historialContainer) {
-    historialContainer.style.display = "block";
-  } else {
-    console.error("El contenedor del historial no se encontró");
-  }
-
-  // Crear y mostrar el mensaje final
-  const mensajeFinal = document.createElement("div");
-  mensajeFinal.className = "mensaje-final";
-  mensajeFinal.innerHTML = `
-    <h1>¡Felicidades!</h1>
-    <p>Has completado todas las tablas de multiplicar.</p>
-    <button onclick="location.reload()">Volver a jugar</button>
-  `;
-  console.log("¡Felicidades! Has completado todas las tablas de multiplicar!");
-  document.body.appendChild(mensajeFinal);
-
-  // Actualizar y mostrar el historial
-  actualizarHistorial();
-
-  console.log("Juego finalizado, historial debería ser visible ahora");
-}
-
-function reiniciarTemporizador() {
-  clearInterval(temporizador);
-  tiempoRestante = 20;
-  temporizador = setInterval(actualizarTemporizador, 1000);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  mostrarPregunta();
-  actualizarPuntajeEnPantalla(); // Agregamos esta línea
+function configurarEventListeners() {
   document
     .querySelector(".container__boton")
     .addEventListener("click", verificarRespuesta);
   document
     .getElementById("reiniciar")
     .addEventListener("click", reiniciarJuego);
-  document.addEventListener("keypress", (e) => {
-    if (
-      e.key === "Enter" &&
-      document.getElementById("reiniciar").disabled === false
-    ) {
+  document.addEventListener("keypress", manejarTeclaEnter);
+}
+
+function manejarTeclaEnter(e) {
+  if (e.key === "Enter") {
+    if (document.getElementById("reiniciar").disabled === false) {
       reiniciarJuego();
-    } else if (
-      e.key === "Enter" &&
-      document.getElementById("reiniciar").disabled === true
-    ) {
+    } else {
       verificarRespuesta();
     }
-  });
-});
+  }
+}
+
+function inicializarJuego() {
+  document.getElementById("valorUsuario").focus();
+  mostrarPregunta();
+  actualizarPuntajeEnPantalla();
+  reiniciarTemporizador();
+  configurarEventListeners();
+}
+
+document.addEventListener("DOMContentLoaded", inicializarJuego);
