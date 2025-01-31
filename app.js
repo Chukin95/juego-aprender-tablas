@@ -37,7 +37,7 @@ function obtenerRespuestaUsuario(tiempoAgotado) {
 
 function validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement) {
   if (!tiempoAgotado && isNaN(respuestaUsuario)) {
-    resultadoElement.textContent = "Debes ingresar un número.";
+    resultadoElement.textContent = "⛔ Debes ingresar un número ⛔";
     resultadoElement.style.color = "red";
     return true;
   }
@@ -46,7 +46,8 @@ function validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement) {
 
 function manejarTiempoAgotado(resultadoElement) {
   clearInterval(temporizador);
-  resultadoElement.textContent = `Tiempo agotado. La respuesta correcta era ${respuestaCorrecta}.`;
+  resultadoElement.textContent = `⏰ Tiempo agotado ⏰
+  La respuesta correcta era ${respuestaCorrecta}.`;
   resultadoElement.style.color = "red";
   mensajeConsola(
     "red",
@@ -70,7 +71,7 @@ function mensajeConsola(tipo = "log", mensaje) {
 
 function manejarRespuestaCorrecta(resultadoElement) {
   clearInterval(temporizador);
-  resultadoElement.textContent = "¡Correcto! 🎉";
+  resultadoElement.textContent = "✅ ¡Correcto! ✅";
   resultadoElement.style.color = "green";
   deshabilitarControles();
   ajustarPuntaje(10);
@@ -91,7 +92,8 @@ function manejarRespuestaIncorrecta(resultadoElement, respuestaUsuario) {
 }
 
 function manejarIntentosRestantes(resultadoElement, respuestaUsuario) {
-  resultadoElement.textContent = `Incorrecto. Intentos restantes: ${intentosRestantes}`;
+  resultadoElement.textContent = `❌ ¡Incorrecto! ❌
+  Intentos restantes: ${intentosRestantes}`;
   resultadoElement.style.color = "red";
   ajustarPuntaje(-5);
   reiniciarTemporizador();
@@ -103,7 +105,8 @@ function manejarIntentosRestantes(resultadoElement, respuestaUsuario) {
 
 function manejarSinIntentosRestantes(resultadoElement, respuestaUsuario) {
   clearInterval(temporizador);
-  resultadoElement.textContent = `Incorrecto. La respuesta correcta era ${respuestaCorrecta}.`;
+  resultadoElement.textContent = `❌ ¡Incorrecto! ❌
+  La respuesta correcta era ${respuestaCorrecta}.`;
   deshabilitarControles();
   ajustarPuntaje(-25);
   mostrarHistorial();
@@ -235,26 +238,35 @@ function generarHistorialHTML() {
   return `
     <div class="historial-final">
       <ul>
-        ${historial.map(item => `
+        ${historial
+          .map(
+            (item) => `
           <li>
             ${item.pregunta} =
-            ${item.respuestaUsuario === "Tiempo agotado"
-              ? "⏳ Tiempo agotado"
-              : `${item.respuestaUsuario} ${item.correcta ? "✅" : "❌"}`
+            ${
+              item.respuestaUsuario === "Tiempo agotado"
+                ? "⏳"
+                : `${item.respuestaUsuario} ${item.correcta ? "✅" : "❌"}`
             }
           </li>
-        `).join('')}
+        `
+          )
+          .join("")}
       </ul>
     </div>
   `;
 }
-
 
 function actualizarHistorial() {
   const historialLista = obtenerListaHistorial();
   if (!historialLista) return;
   limpiarListaHistorial(historialLista);
   agregarElementosHistorial(historialLista);
+  scrollHistorialAlFinal(historialLista);
+}
+
+function scrollHistorialAlFinal(lista) {
+  lista.scrollTop = lista.scrollHeight;
 }
 
 function obtenerListaHistorial() {
@@ -290,7 +302,9 @@ function formatearTextoHistorial(item) {
   } else {
     estadoRespuesta = item.correcta ? "✅" : "❌";
   }
-  return `${item.pregunta} = [${estadoRespuesta}]`;
+  return `${item.pregunta} = ${
+    item.respuestaUsuario === "Tiempo agotado" ? "*" : item.respuestaUsuario
+  } [${estadoRespuesta}]`;
 }
 
 function verificarSubirNivel() {
@@ -340,7 +354,7 @@ function actualizarTemporizador() {
     temporizadorElement.className = "tiempo-rojo";
 
     // Verificar si no hay un mensaje de error antes de considerar el tiempo agotado
-    if (resultadoElement.textContent !== "Debes ingresar un número.") {
+    if (resultadoElement.textContent !== "⛔ Debes ingresar un número ⛔") {
       tiempoAgotado = true;
       verificarRespuesta(true);
     }
@@ -425,7 +439,7 @@ function manejarTeclaEnter(e) {
 }
 
 function preguntarNivelInicial() {
-  const nivelInicial = parseInt(prompt("¿Qué nivel deseas jugar? (1-10)"));
+  const nivelInicial = parseInt(prompt("¿En qué nivel deseas empezar? (1-10)"));
   if (isNaN(nivelInicial) || nivelInicial < 1 || nivelInicial > 10) {
     alert("Por favor, introduce un número entre 1 y 10.");
     preguntarNivelInicial();
@@ -434,6 +448,7 @@ function preguntarNivelInicial() {
   tablas = Array.from({ length: nivelInicial }, (_, i) => i);
   actualizarTablas();
   nivel = nivelInicial;
+  return;
 }
 
 function inicializarJuego() {
