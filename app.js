@@ -47,24 +47,25 @@ function manejarTiempoAgotado(resultadoElement) {
   clearInterval(temporizador);
   resultadoElement.textContent = `Tiempo agotado. La respuesta correcta era ${respuestaCorrecta}.`;
   resultadoElement.style.color = "red";
-  mensajeConsola('error', `Tiempo agotado. La respuesta correcta era ${respuestaCorrecta}.`)
+  mensajeConsola(
+    "red",
+    `⏰ Tiempo agotado. La respuesta correcta era ${respuestaCorrecta}.`
+  );
   deshabilitarControles();
   ajustarPuntaje(-10);
   mostrarHistorial();
 }
 
-function mensajeConsola(tipo, mensaje) {
-  if (tipo === "error") {
-    console.error(`[${new Date().toLocaleTimeString()}] ${mensaje}`);
-  } else if (tipo === "success") {
-    console.log(`[${new Date().toLocaleTimeString()}] %c${mensaje}`, "color: green");
-  } else if (tipo === "info") {
-    console.log(`[${new Date().toLocaleTimeString()}] %c${mensaje}`, "color: blue");
+function mensajeConsola(tipo = "log", mensaje) {
+  if (tipo != "log") {
+    console.log(
+      `[${new Date().toLocaleTimeString()}] %c${mensaje}`,
+      `color: ${tipo}`
+    );
   } else {
     console.log(`[${new Date().toLocaleTimeString()}] ${mensaje}`);
   }
 }
-
 
 function manejarRespuestaCorrecta(resultadoElement) {
   clearInterval(temporizador);
@@ -73,7 +74,10 @@ function manejarRespuestaCorrecta(resultadoElement) {
   deshabilitarControles();
   ajustarPuntaje(10);
   mostrarHistorial();
-  mensajeConsola('success', `Respuesta correcta. La respuesta era ${respuestaCorrecta}. Puntaje +10`);
+  mensajeConsola(
+    "green",
+    `✅ Respuesta correcta. La respuesta era ${respuestaCorrecta}. 📈 Puntaje +10`
+  );
 }
 
 function manejarRespuestaIncorrecta(resultadoElement, respuestaUsuario) {
@@ -90,7 +94,10 @@ function manejarIntentosRestantes(resultadoElement, respuestaUsuario) {
   resultadoElement.style.color = "red";
   ajustarPuntaje(-5);
   reiniciarTemporizador();
-  mensajeConsola('error', `Respuesta incorrecta. Tu respuesta: ${respuestaUsuario}. Respuesta correcta: ${respuestaCorrecta}. Intentos restantes: ${intentosRestantes}. Puntaje -5`);
+  mensajeConsola(
+    "orange",
+    `❌ Respuesta incorrecta. Tu respuesta: ${respuestaUsuario}. Intentos restantes: ${intentosRestantes}. 📉 Puntaje -5`
+  );
 }
 
 function manejarSinIntentosRestantes(resultadoElement, respuestaUsuario) {
@@ -99,9 +106,11 @@ function manejarSinIntentosRestantes(resultadoElement, respuestaUsuario) {
   deshabilitarControles();
   ajustarPuntaje(-25);
   mostrarHistorial();
-  mensajeConsola('error', `Sin intentos restantes. Tu respuesta: ${respuestaUsuario}. Respuesta correcta: ${respuestaCorrecta}. Puntaje -25`);
+  mensajeConsola(
+    "red",
+    `🚫 Sin intentos restantes. Tu respuesta: ${respuestaUsuario}. Respuesta correcta: ${respuestaCorrecta}. 📉 Puntaje -25`
+  );
 }
-
 
 function deshabilitarControles() {
   document.getElementById("reiniciar").disabled = false;
@@ -175,7 +184,10 @@ function finalizarJuego() {
   mostrarHistorialFinal();
   mostrarMensajeFinal();
   actualizarHistorial();
-  mensajeConsola('info', "Juego finalizado, historial debería ser visible ahora");
+  mensajeConsola(
+    "lightblue",
+    "🏁 Juego finalizado, historial debería ser visible ahora"
+  );
 }
 
 function ocultarContenedorPrincipal() {
@@ -183,7 +195,7 @@ function ocultarContenedorPrincipal() {
   if (contenedor) {
     contenedor.style.display = "none";
   } else {
-    mensajeConsola('error', "El contenedor principal no se encontró");
+    mensajeConsola("red", "El contenedor principal no se encontró");
   }
 }
 
@@ -192,14 +204,17 @@ function mostrarHistorialFinal() {
   if (historialContainer) {
     historialContainer.style.display = "block";
   } else {
-    mensajeConsola('error', "El contenedor del historial no se encontró");
+    mensajeConsola("red", "El contenedor del historial no se encontró");
   }
 }
 
 function mostrarMensajeFinal() {
   const mensajeFinal = crearElementoMensajeFinal();
   document.body.appendChild(mensajeFinal);
-  mensajeConsola('success', "¡Felicidades! Has completado todas las tablas de multiplicar!");
+  mensajeConsola(
+    "green",
+    "¡Felicidades! Has completado todas las tablas de multiplicar!"
+  );
 }
 
 function crearElementoMensajeFinal() {
@@ -223,7 +238,7 @@ function actualizarHistorial() {
 function obtenerListaHistorial() {
   const historialLista = document.getElementById("historial-lista");
   if (!historialLista) {
-    mensajeConsola('error', "La lista del historial no se encontró");
+    mensajeConsola("red", "La lista del historial no se encontró");
     return null;
   }
   return historialLista;
@@ -256,7 +271,6 @@ function formatearTextoHistorial(item) {
   return `${item.pregunta} = [${estadoRespuesta}]`;
 }
 
-
 function verificarSubirNivel() {
   if (puntaje >= puntajeRequerido) {
     if (esNivelMaximo()) {
@@ -276,7 +290,7 @@ function esNivelMaximo() {
 function subirNivel() {
   puntaje = 0;
   nivel++;
-  mensajeConsola('success', `Has pasado al nivel ${nivel}!`);
+  mensajeConsola("green", `🎉 Has pasado al nivel ${nivel}!`);
 }
 
 function actualizarTablas() {
@@ -284,7 +298,7 @@ function actualizarTablas() {
   if (tablas.length > 2) {
     tablas = tablas.slice(-2);
   }
-  mensajeConsola('', `Tablas actuales: ${tablas.join(" y ")}`);
+  mensajeConsola("purple", `🔢 Tablas actuales: ${tablas.join(" y ")}`);
 }
 
 function actualizarInterfazNuevoNivel() {
@@ -344,7 +358,9 @@ function generarMultiplicacion() {
 // Mostrar la pregunta en la pantalla
 function mostrarPregunta() {
   const { tabla, numero, resultado } = generarMultiplicacion();
-  document.querySelector("h1").textContent = `${tabla}x${numero} / ${numero}x${tabla}`;
+  document.querySelector(
+    "h1"
+  ).textContent = `${tabla}x${numero} / ${numero}x${tabla}`;
   respuestaCorrecta = resultado;
   reiniciarTemporizador();
 }
@@ -354,10 +370,9 @@ function mostrarHistorial() {
   if (historialContainer) {
     historialContainer.style.display = "block";
   } else {
-    mensajeConsola('error', "El contenedor del historial no se encontró");
+    mensajeConsola("red", "El contenedor del historial no se encontró");
   }
 }
-
 
 function configurarEventListeners() {
   document
