@@ -188,7 +188,7 @@ function crearElementoMensajeFinal() {
   const mensajeFinal = document.createElement("div");
   mensajeFinal.className = "mensaje-final";
   mensajeFinal.innerHTML = `
-    <h1>¡Felicidades!</h1>
+    <h1>¡Felicidades! Has completado todas las tablas de multiplicar!</h1>
     <p>Has completado todas las tablas de multiplicar.</p>
     <button onclick="location.reload()">Volver a jugar</button>
   `;
@@ -200,7 +200,6 @@ function actualizarHistorial() {
   if (!historialLista) return;
   limpiarListaHistorial(historialLista);
   agregarElementosHistorial(historialLista);
-  console.log(`Historial actualizado con ${historial.length} elementos`);
 }
 
 function obtenerListaHistorial() {
@@ -230,8 +229,8 @@ function crearElementoHistorial(item) {
 }
 
 function formatearTextoHistorial(item) {
-  const estadoRespuesta = item.correcta ? "✅ Correcto" : "❌ Incorrecto";
-  return ` Tu respuesta a ${item.pregunta} ha sido: ${item.respuestaUsuario} - (${estadoRespuesta})`;
+  const estadoRespuesta = item.correcta ? "✅" : "❌";
+  return `${item.pregunta} = ${item.respuestaUsuario} [${estadoRespuesta}]`;
 }
 
 function verificarSubirNivel() {
@@ -270,42 +269,31 @@ function actualizarInterfazNuevoNivel() {
   reiniciarJuego();
   actualizarPuntajeEnPantalla();
 }
-
 function actualizarTemporizador() {
-  actualizarTextoTemporizador();
-  actualizarColorTemporizador();
-  manejarTiempoAgotado();
-  decrementarTiempo();
-}
-
-function actualizarTextoTemporizador() {
   const temporizadorElement = document.getElementById("temporizador");
-  temporizadorElement.textContent = `Tiempo: ${tiempoRestante}s`;
-}
 
-function actualizarColorTemporizador() {
-  const temporizadorElement = document.getElementById("temporizador");
-  temporizadorElement.className = obtenerClaseTiempo();
-}
-
-function obtenerClaseTiempo() {
-  if (tiempoRestante > 15) return "tiempo-verde";
-  if (tiempoRestante > 10) return "tiempo-amarillo";
-  if (tiempoRestante > 5) return "tiempo-naranja";
-  return "tiempo-rojo";
-}
-
-function manejarTiempoAgotado() {
-  if (tiempoRestante === 0) {
+  if (tiempoRestante <= 0) {
     clearInterval(temporizador);
+    temporizadorElement.textContent = `Tiempo: 0s`;
+    temporizadorElement.className = "tiempo-rojo";
     verificarRespuesta(true);
+    return;
   }
-}
 
-function decrementarTiempo() {
-  if (tiempoRestante > 0) {
-    tiempoRestante--;
+  temporizadorElement.textContent = `Tiempo: ${tiempoRestante}s`;
+
+  // Actualizar el color basado en el tiempo restante
+  if (tiempoRestante > 15) {
+    temporizadorElement.className = "tiempo-verde";
+  } else if (tiempoRestante > 10) {
+    temporizadorElement.className = "tiempo-amarillo";
+  } else if (tiempoRestante > 5) {
+    temporizadorElement.className = "tiempo-naranja";
+  } else {
+    temporizadorElement.className = "tiempo-rojo";
   }
+
+  tiempoRestante--;
 }
 
 function reiniciarTemporizador() {
@@ -366,7 +354,20 @@ function manejarTeclaEnter(e) {
   }
 }
 
+function preguntarNivelInicial() {
+  const nivelInicial = parseInt(prompt("¿Qué nivel deseas jugar? (1-10)"));
+  if (isNaN(nivelInicial) || nivelInicial < 1 || nivelInicial > 10) {
+    alert("Por favor, introduce un número entre 1 y 10.");
+    preguntarNivelInicial();
+    return;
+  }
+  tablas = Array.from({ length: nivelInicial }, (_, i) => i);
+  actualizarTablas();
+  nivel = nivelInicial;
+}
+
 function inicializarJuego() {
+  preguntarNivelInicial();
   document.getElementById("valorUsuario").focus();
   mostrarPregunta();
   actualizarPuntajeEnPantalla();
