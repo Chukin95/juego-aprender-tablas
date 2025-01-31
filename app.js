@@ -14,6 +14,7 @@ function verificarRespuesta(tiempoAgotado = false) {
   const resultadoElement = document.querySelector(".texto__parrafo");
 
   if (validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement)) return;
+  clearInterval(temporizador);
 
   if (tiempoAgotado) {
     manejarTiempoAgotado(resultadoElement);
@@ -307,14 +308,21 @@ function actualizarInterfazNuevoNivel() {
   reiniciarJuego();
   actualizarPuntajeEnPantalla();
 }
+let tiempoAgotado = false;
 function actualizarTemporizador() {
   const temporizadorElement = document.getElementById("temporizador");
+  const resultadoElement = document.querySelector(".texto__parrafo");
 
   if (tiempoRestante <= 0) {
     clearInterval(temporizador);
     temporizadorElement.textContent = `Tiempo: 0s`;
     temporizadorElement.className = "tiempo-rojo";
-    verificarRespuesta(true);
+
+    // Verificar si no hay un mensaje de error antes de considerar el tiempo agotado
+    if (resultadoElement.textContent !== "Debes ingresar un número.") {
+      tiempoAgotado = true;
+      verificarRespuesta(true);
+    }
     return;
   }
 
@@ -337,6 +345,7 @@ function actualizarTemporizador() {
 function reiniciarTemporizador() {
   clearInterval(temporizador);
   tiempoRestante = 20;
+  tiempoAgotado = false;
   temporizador = setInterval(actualizarTemporizador, 1000);
 }
 
