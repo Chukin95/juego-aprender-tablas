@@ -39,6 +39,7 @@ function validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement) {
   if (!tiempoAgotado && isNaN(respuestaUsuario)) {
     resultadoElement.textContent = "⛔ Debes ingresar un número ⛔";
     resultadoElement.style.color = "red";
+    agitarContenedor();
     return true;
   }
   return false;
@@ -97,6 +98,7 @@ function manejarIntentosRestantes(resultadoElement, respuestaUsuario) {
   resultadoElement.style.color = "red";
   ajustarPuntaje(-5);
   reiniciarTemporizador();
+  agitarContenedor();
   mensajeConsola(
     "orange",
     `❌ Respuesta incorrecta. Tu respuesta: ${respuestaUsuario}. Intentos restantes: ${intentosRestantes}. 📉 Puntaje -5`
@@ -110,6 +112,7 @@ function manejarSinIntentosRestantes(resultadoElement, respuestaUsuario) {
   deshabilitarControles();
   ajustarPuntaje(-25);
   mostrarHistorial();
+  agitarContenedor();
   mensajeConsola(
     "red",
     `🚫 Sin intentos restantes. Tu respuesta: ${respuestaUsuario}. Respuesta correcta: ${respuestaCorrecta}. 📉 Puntaje -25`
@@ -188,6 +191,7 @@ function finalizarJuego() {
   mostrarHistorialFinal();
   mostrarMensajeFinal();
   actualizarHistorial();
+  mostrarFiesta(500);
   mensajeConsola(
     "lightblue",
     "🏁 Juego finalizado, historial debería ser visible ahora"
@@ -326,6 +330,7 @@ function esNivelMaximo() {
 function subirNivel() {
   puntaje = 0;
   nivel++;
+  mostrarFiesta();
   mensajeConsola("green", `🎉 Has pasado al nivel ${nivel}!`);
 }
 
@@ -355,6 +360,7 @@ function actualizarTemporizador() {
 
     // Verificar si no hay un mensaje de error antes de considerar el tiempo agotado
     if (resultadoElement.textContent !== "⛔ Debes ingresar un número ⛔") {
+      agitarContenedor();
       tiempoAgotado = true;
       verificarRespuesta(true);
     }
@@ -416,6 +422,8 @@ function mostrarHistorial() {
   } else {
     mensajeConsola("red", "El contenedor del historial no se encontró");
   }
+  const historialLista = obtenerListaHistorial();
+  scrollHistorialAlFinal(historialLista);
 }
 
 function configurarEventListeners() {
@@ -449,6 +457,52 @@ function preguntarNivelInicial() {
   actualizarTablas();
   nivel = nivelInicial;
   return;
+}
+
+function agitarContenedor() {
+  const container = document.querySelector(".container");
+  container.classList.add("shake");
+  setTimeout(() => {
+    container.classList.remove("shake");
+  }, 500);
+}
+
+function mostrarFiesta(cantidad = 50) {
+  const partyOverlay = document.querySelector("#partyOverlay");
+  partyOverlay.style.display = "block";
+  const confettiCount = cantidad;
+  for (let i = 0; i < confettiCount; i++) {
+    let confetti = document.createElement("div");
+    confetti.classList.add("confetti"); // Posición horizontal aleatoria
+    confetti.style.left = Math.random() * 100 + "vw"; // Tamaño aleatorio
+    const size = Math.random() * 11 + 6; // entre 5px y 13px
+    confetti.style.width = size + "px";
+    confetti.style.height = size + "px";
+    const colores = [
+      "#FFC107",
+      "#FF5722",
+      "#8BC34A",
+      "#03A9F4",
+      "#E91E63",
+      "#00ffff",
+      "#ffff00",
+      "#ff00ff",
+      "#ffffff",
+      "#ff0000",
+      "#00ff00",
+      "#0000ff",
+    ];
+    confetti.style.backgroundColor =
+      colores[Math.floor(Math.random() * colores.length)]; // Color aleatorio de un conjunto
+    const duracion = 3 + Math.random() * 2; // Duración aleatoria de la animación: entre 3 y 5 segundos
+    confetti.style.animation = `confettiFall ${duracion}s linear forwards`;
+    partyOverlay.appendChild(confetti);
+  }
+  // Limpiar el overlay después de la animación (5 segundos)
+  setTimeout(() => {
+    partyOverlay.innerHTML = "";
+    partyOverlay.style.display = "none";
+  }, 5000);
 }
 
 function inicializarJuego() {
