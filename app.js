@@ -6,7 +6,8 @@ let intentosRestantes = 3;
 let tablas = [1, 2];
 let respuestaCorrecta;
 let nivel = 1;
-let tiempoRestante = 20;
+const tiempoInicial = 6;
+let tiempoRestante = tiempoInicial;
 let temporizador;
 
 function verificarRespuesta(tiempoAgotado = false) {
@@ -370,11 +371,14 @@ function actualizarTemporizador() {
   temporizadorElement.textContent = `Tiempo: ${tiempoRestante}s`;
 
   // Actualizar el color basado en el tiempo restante
-  if (tiempoRestante > 15) {
+  if (
+    tiempoRestante >
+    tiempoInicial / 4 + tiempoInicial / 4 + tiempoInicial / 4
+  ) {
     temporizadorElement.className = "tiempo-verde";
-  } else if (tiempoRestante > 10) {
+  } else if (tiempoRestante > tiempoInicial / 4 + tiempoInicial / 4) {
     temporizadorElement.className = "tiempo-amarillo";
-  } else if (tiempoRestante > 5) {
+  } else if (tiempoRestante > tiempoInicial / 4) {
     temporizadorElement.className = "tiempo-naranja";
   } else {
     temporizadorElement.className = "tiempo-rojo";
@@ -385,7 +389,7 @@ function actualizarTemporizador() {
 
 function reiniciarTemporizador() {
   clearInterval(temporizador);
-  tiempoRestante = 20;
+  tiempoRestante = tiempoInicial;
   tiempoAgotado = false;
   temporizador = setInterval(actualizarTemporizador, 1000);
 }
