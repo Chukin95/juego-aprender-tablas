@@ -6,7 +6,7 @@ let intentosRestantes = 3;
 let tablas = [1, 2];
 let respuestaCorrecta;
 let nivel = 1;
-const tiempoInicial = 6;
+const tiempoInicial = prompt('¿Cuánto tiempo deseas por pregunta (en segundos)?');
 let tiempoRestante = tiempoInicial;
 let temporizador;
 
