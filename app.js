@@ -6,9 +6,8 @@ let intentosRestantes = 3;
 let tablas = [1, 2];
 let respuestaCorrecta;
 let nivel = 1;
-const tiempoInicial = prompt(
-  "¿Cuánto tiempo deseas por pregunta (en segundos)?"
-);
+const tiempoInicial =
+  prompt("¿Cuánto tiempo deseas por pregunta (en segundos)?") || 30;
 let tiempoRestante = tiempoInicial;
 let temporizador;
 
@@ -461,7 +460,8 @@ function manejarTeclaEnter(e) {
 }
 
 function preguntarNivelInicial() {
-  const nivelInicial = parseInt(prompt("¿En qué nivel deseas empezar? (1-10)"));
+  const nivelInicial =
+    parseInt(prompt("¿En qué nivel deseas empezar? (1-10)")) || 1;
   if (isNaN(nivelInicial) || nivelInicial < 1 || nivelInicial > 10) {
     alert("Por favor, introduce un número entre 1 y 10.");
     preguntarNivelInicial();
