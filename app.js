@@ -6,7 +6,9 @@ let intentosRestantes = 3;
 let tablas = [1, 2];
 let respuestaCorrecta;
 let nivel = 1;
-const tiempoInicial = prompt('¿Cuánto tiempo deseas por pregunta (en segundos)?');
+const tiempoInicial = prompt(
+  "¿Cuánto tiempo deseas por pregunta (en segundos)?"
+);
 let tiempoRestante = tiempoInicial;
 let temporizador;
 
@@ -14,26 +16,22 @@ function verificarRespuesta(tiempoAgotado = false) {
   const respuestaUsuario = obtenerRespuestaUsuario(tiempoAgotado);
   const resultadoElement = document.querySelector(".texto__parrafo");
 
-  if (validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement)) return;
-  clearInterval(temporizador);
-
   if (tiempoAgotado) {
     manejarTiempoAgotado(resultadoElement);
+  } else if (
+    validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement)
+  ) {
+    return;
   } else if (respuestaUsuario === respuestaCorrecta) {
     manejarRespuestaCorrecta(resultadoElement);
   } else {
     manejarRespuestaIncorrecta(resultadoElement, respuestaUsuario);
   }
 
+  clearInterval(temporizador);
   verificarSubirNivel();
   actualizarHistorialRespuesta(tiempoAgotado, respuestaUsuario);
   actualizarInterfaz();
-}
-
-function obtenerRespuestaUsuario(tiempoAgotado) {
-  return tiempoAgotado
-    ? null
-    : parseInt(document.getElementById("valorUsuario").value, 10);
 }
 
 function validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement) {
@@ -44,6 +42,12 @@ function validarEntrada(tiempoAgotado, respuestaUsuario, resultadoElement) {
     return true;
   }
   return false;
+}
+
+function obtenerRespuestaUsuario(tiempoAgotado) {
+  return tiempoAgotado
+    ? null
+    : parseInt(document.getElementById("valorUsuario").value, 10);
 }
 
 function manejarTiempoAgotado(resultadoElement) {
@@ -124,6 +128,15 @@ function deshabilitarControles() {
   document.getElementById("reiniciar").disabled = false;
   document.getElementById("intentoBoton").disabled = true;
   document.getElementById("valorUsuario").disabled = true;
+  // Asegurarse de que el input esté realmente deshabilitado
+  document.getElementById("valorUsuario").setAttribute("readonly", "readonly");
+}
+
+function habilitarControles() {
+  document.getElementById("reiniciar").disabled = true;
+  document.getElementById("intentoBoton").disabled = false;
+  document.getElementById("valorUsuario").disabled = false;
+  document.getElementById("valorUsuario").removeAttribute("readonly");
 }
 
 function ajustarPuntaje(puntos) {
@@ -133,7 +146,9 @@ function ajustarPuntaje(puntos) {
 function actualizarHistorialRespuesta(tiempoAgotado, respuestaUsuario) {
   historial.push({
     pregunta: document.querySelector("h1").textContent,
-    respuestaUsuario: tiempoAgotado ? "Tiempo agotado" : respuestaUsuario,
+    respuestaUsuario: tiempoAgotado
+      ? "Tiempo agotado"
+      : respuestaUsuario || "Sin respuesta",
     correcta: respuestaUsuario === respuestaCorrecta,
   });
 }
@@ -151,6 +166,7 @@ function reiniciarJuego() {
   ocultarHistorial();
   reiniciarTemporizador();
   actualizarPuntajeEnPantalla();
+  habilitarControles();
   enfocarInputUsuario();
 }
 
@@ -358,27 +374,21 @@ function actualizarTemporizador() {
     clearInterval(temporizador);
     temporizadorElement.textContent = `Tiempo: 0s`;
     temporizadorElement.className = "tiempo-rojo";
-
-    // Verificar si no hay un mensaje de error antes de considerar el tiempo agotado
-    if (resultadoElement.textContent !== "⛔ Debes ingresar un número ⛔") {
-      agitarContenedor();
-      tiempoAgotado = true;
-      verificarRespuesta(true);
-    }
+    deshabilitarControles(); // Siempre deshabilitar los controles cuando el tiempo llega a 0
+    tiempoAgotado = true;
+    verificarRespuesta(true);
+    mostrarHistorial(); // Mostrar el historial
     return;
   }
 
   temporizadorElement.textContent = `Tiempo: ${tiempoRestante}s`;
 
   // Actualizar el color basado en el tiempo restante
-  if (
-    tiempoRestante >
-    tiempoInicial / 4 + tiempoInicial / 4 + tiempoInicial / 4
-  ) {
+  if (tiempoRestante > tiempoInicial * 0.75) {
     temporizadorElement.className = "tiempo-verde";
-  } else if (tiempoRestante > tiempoInicial / 4 + tiempoInicial / 4) {
+  } else if (tiempoRestante > tiempoInicial * 0.5) {
     temporizadorElement.className = "tiempo-amarillo";
-  } else if (tiempoRestante > tiempoInicial / 4) {
+  } else if (tiempoRestante > tiempoInicial * 0.25) {
     temporizadorElement.className = "tiempo-naranja";
   } else {
     temporizadorElement.className = "tiempo-rojo";
