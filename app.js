@@ -25,8 +25,12 @@ function verificarRespuesta(tiempoAgotado = false) {
     manejarRespuestaCorrecta(resultadoElement);
   } else {
     manejarRespuestaIncorrecta(resultadoElement, respuestaUsuario);
+    if (intentosRestantes > 0) {
+      return; // Salimos de la función para permitir más intentos
+    }
   }
 
+  // Solo llegamos aquí si el tiempo se agotó, la respuesta fue correcta, o se agotaron los intentos
   clearInterval(temporizador);
   verificarSubirNivel();
   actualizarHistorialRespuesta(tiempoAgotado, respuestaUsuario);
@@ -101,12 +105,15 @@ function manejarIntentosRestantes(resultadoElement, respuestaUsuario) {
   Intentos restantes: ${intentosRestantes}`;
   resultadoElement.style.color = "red";
   ajustarPuntaje(-5);
-  reiniciarTemporizador();
+  // Eliminamos la llamada a reiniciarTemporizador() aquí
   agitarContenedor();
   mensajeConsola(
     "orange",
     `❌ Respuesta incorrecta. Tu respuesta: ${respuestaUsuario}. Intentos restantes: ${intentosRestantes}. 📉 Puntaje -5`
   );
+  // Limpiamos el campo de entrada y lo enfocamos para el siguiente intento
+  document.getElementById("valorUsuario").value = "";
+  document.getElementById("valorUsuario").focus();
 }
 
 function manejarSinIntentosRestantes(resultadoElement, respuestaUsuario) {
